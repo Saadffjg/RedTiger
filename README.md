@@ -87,10 +87,6 @@ RedTiger/
 ```
 
 ## 🚀 Usage
-Permissions
-```Bash
-chmod +x redtiger.sh
-```
 
 Run RedTiger against a target domain:
 
@@ -132,7 +128,7 @@ example.com/
 
 ## 📷 Screenshots
 
-https://github.com/medjahdi/RedTiger/blob/main/banner.png
+![RedTiger Banner](https://github.com/medjahdi/RedTiger/blob/main/banner.png)
 
 ## 🤝 Contributing
 
