@@ -1,180 +1,164 @@
-# XSS Automation Testing Tool
+# RedTiger - XSS Automation Testing Tool
 
-![Version](https://img.shields.io/badge/version-1.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-
-A comprehensive automation tool for XSS vulnerability discovery and testing in web applications. This tool combines multiple reconnaissance and scanning techniques to identify potential XSS vulnerabilities in a target domain.
-
-## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-- [How It Works](#how-it-works)
-- [Project Structure](#project-structure)
-- [Customization](#customization)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Overview
-
-This XSS Automation Testing Tool automates the process of discovering subdomains, identifying live web services, crawling for endpoints, filtering for potential XSS injection points, and testing those points for vulnerabilities. The tool produces an elegant HTML report summarizing the findings.
-
-## Features
-
-- **Subdomain Discovery**: Uses `subfinder` to discover all subdomains of a target domain
-- **Live Subdomain Verification**: Custom HTTP/HTTPS verification without relying on `httpx`
-- **Endpoint Crawling**: Uses `katana` to discover endpoints across all live subdomains
-- **Parameter Filtering**: Automatically filters endpoints containing URL parameters
-- **XSS Vulnerability Testing**: Tests filtered endpoints using XSSNOVA (XSStrike)
-- **Animated Progress**: Displays spinners and progress bars during scanning operations
-- **Comprehensive HTML Report**: Generates a professional HTML report with statistics and findings
-- **Terminal UI**: Color-coded terminal output with clear status indicators
-
-## Prerequisites
-
-The following tools must be installed on your system:
-
-- Bash (Linux environment)
-- `curl`
-- `subfinder` (https://github.com/projectdiscovery/subfinder)
-- `katana` (https://github.com/projectdiscovery/katana)
-- `XSSNOVA` (renamed XSStrike - https://github.com/s0md3v/XSStrike)
-- Python 3 (for running XSSNOVA)
-
-## Installation
-
-1. Clone this repository:
-```bash
-git clone https://github.com/medjahdi/xss-automation-tool.git
-cd xss-automation-tool
+```
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣠⣤⣤⣤⡴⣶⣶⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣴⣶⣿⣿⣿⣿⣿⣿⣷⣿⣶⣿⣧⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣄⣀⣀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣾⣿⣿⣿⠿⠿⠛⠛⠛⠋⠉⠉⠉⠛⠛⠛⠛⠿⠟⠛⠛⠛⠛⠛⠛⠛⠛⠛⣻⣿⣿⠋⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣠⣴⣿⣿⣿⠟⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣟⡁⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⣾⣿⣿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠴⠿⠿⠿⣿⣿⣷⣦⡀⠀⠀⠀⠀
+⠀⠀⠀⢰⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣠⣄⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⣶⣄⠀⠀
+⠀⠀⠀⢸⣿⣿⣿⣦⣤⣤⣀⣀⣀⣀⣠⣤⠴⠖⠋⢉⣽⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠧⡀
+⠀⠀⢠⣿⠟⠉⠁⠈⠉⠉⠙⠛⠛⠿⠿⣿⣿⣿⣿⣿⣿⠿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈
+⠀⢠⣿⡁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠽⠟⠛⠉⠀⢀⣀⣤⣴⣶⣶⣶⣶⣶⣶⣤⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⣿⣿⣿⣷⣶⣦⣤⣤⣤⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠈⠉⠛⠿⣿⣿⣿⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⢸⣿⠘⢿⣿⣿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣤⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠈⣿⣴⣿⣿⣄⠀⠀⠀⠀⠀⠀⣀⣠⣴⠶⣿⣿⠋⠉⠉⠉⠙⢻⣿⡆⠀⠀⠀⠀⠀⠀⣀⣴⣶⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀⠀
+⠀⢹⣿⡍⠛⠻⢷⣶⣶⣶⠟⢿⣿⠗⠀⠹⠃⡀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⢀⣴⣿⣿⣿⣿⠿⠿⠛⠛⠛⠛⠛⠂⠀⠀⠀⠀⠀⠀
+⠀⠀⢻⡇⠀⠀⠀⢻⣿⣿⠀⠈⠛⠀⠀⠀⢹⠇⠀⠀⠀⠀⢶⣿⠇⠀⢀⣴⣿⣿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠁⠀⠀⠀⠀⠹⡇⠀⠀⠀⠀⠀⣀⡾⠀⠀⠀⠀⠀⢸⡿⠀⣠⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⣦⠀⠀⢠⣿⢳⠀⠀⠀⠙⣿⣿⠁⢰⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⣿⣷⡾⠿⠃⢸⣷⣀⠀⢀⣾⠃⢀⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⠻⠷⢾⣿⣿⣷⡿⠁⠀⢸⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⢿⣷⣄⠀⠀⠉⠛⠀⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠿⣿⣦⣄⡀⠀⠀⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⣿⣶⣶⣾⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠛⠛⠿⠧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ```
 
-2. Make the scripts executable:
+## 🚩 Overview
+
+RedTiger is an automated XSS (Cross-Site Scripting) vulnerability testing tool built to streamline the process of security testing. It automates four key phases: subdomain enumeration, link filtering, endpoint extraction, and XSS vulnerability scanning.
+
+**Author:** [@medjahdi](https://github.com/medjahdi)  
+**Version:** 1.0.0
+
+## ✨ Features
+
+- 🔍 **Comprehensive Scanning**: Subdomain discovery, link filtering, endpoint extraction, and XSS testing
+- 🎯 **Intelligent Filtering**: Tests only endpoints with parameters (containing "?"), increasing efficiency
+- 🖥️ **Rich Terminal UI**: Beautiful animations, progress bars, and color-coded output
+- 📊 **Detailed Reporting**: Shows scan statistics and sample results in each phase
+- 🔄 **Main Domain Inclusion**: Always tests the main domain even when no subdomains are found
+- 🛡️ **Dependency Checking**: Ensures all required tools are available before starting
+
+## 🔧 Requirements
+
+RedTiger requires the following tools:
+
+- [`subfinder`](https://github.com/projectdiscovery/subfinder) - For subdomain enumeration
+- [`katana`](https://github.com/projectdiscovery/katana) - For endpoint extraction
+- [`XnovaX`](https://github.com/medjahdi/XnovaX) - For filtering useful links
+- [`XSSNOVA`](https://github.com/medjahdi/XSSNOVA) - For XSS vulnerability scanning
+
+## 📦 Installation
+
+1. Clone the repository:
+
 ```bash
-chmod +x setup.sh xss_auto_scan.sh
+git clone https://github.com/medjahdi/RedTiger.git
+cd RedTiger
 ```
 
-3. Run the setup script to verify and install dependencies:
-```bash
-./setup.sh
-```
-
-4. If you don't have XSSNOVA (XSStrike) yet:
-```bash
-git clone https://github.com/s0md3v/XSStrike.git XSSNOVA
-```
-
-## Usage
-
-Run the tool with a target domain:
+2. Make the script executable:
 
 ```bash
-./xss_auto_scan.sh example.com
+chmod +x redtiger.sh
 ```
 
-The tool will:
-1. Display a banner with tool information
-2. Discover subdomains of the target domain
-3. Check which subdomains are live
-4. Crawl live subdomains for endpoints
-5. Filter endpoints with parameters
-6. Test filtered endpoints for XSS vulnerabilities
-7. Generate an HTML report with the results
+3. Install dependencies if not already installed:
 
-## How It Works
+```bash
+# Install subfinder
+GO111MODULE=on go get -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder
 
-The tool follows this workflow:
+# Install katana
+GO111MODULE=on go get -v github.com/projectdiscovery/katana/cmd/katana
+```
 
-1. **Subdomain Discovery**:
-   - Uses `subfinder` to enumerate all subdomains
-   - Saves results to `{domain.com}_subdomain_results.txt`
+4. Make sure XnovaX and XSSNOVA are in their respective directories:
 
-2. **Live Subdomain Verification**:
-   - Tests each subdomain with both HTTP and HTTPS protocols
-   - Records only responsive subdomains to `{domain.com}_clean_livesubs.txt`
+```
+RedTiger/
+├── redtiger.sh
+├── XnovaX/
+│   └── xnovax.py
+└── XSSNOVA/
+    └── xssnova.py
+```
 
-3. **Endpoint Discovery**:
-   - Uses `katana` to crawl each live subdomain
-   - Saves all discovered URLs to `{domain.com}_endpoints.txt`
+## 🚀 Usage
+
+Run RedTiger against a target domain:
+
+```bash
+./redtiger.sh example.com
+```
+
+The tool will create a directory structure as follows:
+
+```
+example.com/
+├── subdomains.txt     # All discovered subdomains
+├── clean_livesubs.txt # Filtered useful links
+├── endpoints.txt      # All extracted endpoints
+└── attack.txt         # Endpoints with parameters for XSS testing
+```
+
+## 🔄 Workflow
+
+1. **Subdomain Enumeration** (`subfinder`):
+   - Discovers all subdomains for the target domain
+   - Automatically adds the main domain for testing
+
+2. **Link Filtering** (`XnovaX`):
+   - Filters useful and live links from discovered subdomains
+   - Saves the filtered links for the next phase
+
+3. **Endpoint Extraction** (`katana`):
+   - Crawls all filtered links to discover endpoints
+   - Extracts all URLs and paths from the target
 
 4. **Parameter Filtering**:
-   - Filters endpoints containing URL parameters (with "?")
-   - Saves potential XSS targets to `{domain.com}_xssnova.txt`
+   - Selects only endpoints with parameters (containing "?")
+   - Creates a focused list for efficient XSS testing
 
-5. **XSS Testing**:
-   - Tests each URL with XSSNOVA
-   - Logs results to `{domain.com}_xss_results.txt`
+5. **XSS Testing** (`xssnova`):
+   - Tests each parameterized endpoint for XSS vulnerabilities
+   - Reports potential vulnerabilities
 
-6. **Report Generation**:
-   - Creates a comprehensive HTML report with all findings
-   - Saves it as `{domain.com}_xss_report.html`
+## 📷 Screenshots
 
-## Project Structure
+### Banner & Initialization
+![RedTiger Initialization](https://raw.githubusercontent.com/medjahdi/RedTiger/main/screenshots/banner.png)
 
-```
-xss-automation-tool/
-├── xss_auto_scan.sh      # Main script
-├── setup.sh              # Setup verification script
-├── results/              # Directory containing all scan results
-│   ├── *_subdomain_results.txt
-│   ├── *_clean_livesubs.txt
-│   ├── *_endpoints.txt
-│   ├── *_xssnova.txt
-│   ├── *_xss_results.txt
-│   └── *_xss_report.html
-└── XSSNOVA/              # Directory containing the XSSNOVA tool
-```
+### Subdomain Enumeration
+![Subdomain Enumeration](https://raw.githubusercontent.com/medjahdi/RedTiger/main/screenshots/subdomains.png)
 
-## Customization
+### XSS Testing
+![XSS Testing](https://raw.githubusercontent.com/medjahdi/RedTiger/main/screenshots/xss-testing.png)
 
-You can customize the tool by modifying `xss_auto_scan.sh`:
+### Scan Summary
+![Scan Summary](https://raw.githubusercontent.com/medjahdi/RedTiger/main/screenshots/summary.png)
 
-- **HTML Report Design**: Edit the HTML/CSS in the `generate_report()` function
-- **Request Timing**: Adjust timeouts in the `check_url_alive()` function
-- **Animation Speed**: Modify the sleep times in animation functions
-- **Additional Filters**: Add or modify grep patterns in the `filter_endpoints()` function
-- **Test Parameters**: Modify XSSNOVA command line options in `test_xss_vulnerabilities()`
+## 🤝 Contributing
 
-## Troubleshooting
+Contributions are welcome! Feel free to submit a Pull Request.
 
-**Common Issues:**
-
-1. **Permission Denied Errors**:
-   ```bash
-   chmod +x xss_auto_scan.sh setup.sh
-   ```
-
-2. **Tool Not Found Errors**:
-   Ensure that all required tools are installed and in your PATH.
-   ```bash
-   which subfinder katana
-   ```
-
-3. **Scan Taking Too Long**:
-   For large domains, you can adjust the timeout values in `check_url_alive()` function.
-
-4. **Empty Results**:
-   - Check if the target domain is accessible
-   - Verify your internet connection
-   - Try running individual tools manually to debug
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
+1. Fork the project
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
+## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## 📧 Contact
+
+- **Author:** [@medjahdi](https://github.com/medjahdi)
+- **GitHub Repository:** [https://github.com/medjahdi/RedTiger](https://github.com/medjahdi/RedTiger)
+
 ---
 
-Created by medjahdii - June 2025
+⚠️ **Disclaimer:** This tool is intended for ethical security testing only. Always ensure you have permission to test the target domain.
