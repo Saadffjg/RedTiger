@@ -87,6 +87,10 @@ RedTiger/
 ```
 
 ## 🚀 Usage
+Permissions
+```Bash
+chmod +x redtiger.sh
+```
 
 Run RedTiger against a target domain:
 
@@ -128,17 +132,7 @@ example.com/
 
 ## 📷 Screenshots
 
-### Banner & Initialization
-![RedTiger Initialization](https://raw.githubusercontent.com/medjahdi/RedTiger/main/screenshots/banner.png)
-
-### Subdomain Enumeration
-![Subdomain Enumeration](https://raw.githubusercontent.com/medjahdi/RedTiger/main/screenshots/subdomains.png)
-
-### XSS Testing
-![XSS Testing](https://raw.githubusercontent.com/medjahdi/RedTiger/main/screenshots/xss-testing.png)
-
-### Scan Summary
-![Scan Summary](https://raw.githubusercontent.com/medjahdi/RedTiger/main/screenshots/summary.png)
+https://github.com/medjahdi/RedTiger/blob/main/banner.png
 
 ## 🤝 Contributing
 
