@@ -152,3 +152,15 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 ⚠️ **Disclaimer:** This tool is intended for ethical security testing only. Always ensure you have permission to test the target domain.
+
+## 💰 Support the Project
+
+If you find RedTiger useful, consider supporting its development:
+
+<p align="center">
+  <a href="https://www.paypal.com/ncp/payment/W5SHTZX6LZH86">
+    <img src="https://img.shields.io/badge/Donate-PayPal-blue.svg?style=for-the-badge&logo=paypal" alt="PayPal">
+  </a>
+</p>
+
+<p align="center">Your support helps maintain and improve RedTiger!</p>
